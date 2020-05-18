@@ -7,9 +7,7 @@ import numpy as np
 
 from sklearn.metrics import precision_recall_fscore_support, accuracy_score
 
-from model import (
-    ElectraForMultiLabelClassification,
-)
+from model import ElectraForMultiLabelClassification
 
 from transformers import (
     ElectraConfig,

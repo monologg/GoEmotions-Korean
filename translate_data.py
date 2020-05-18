@@ -3,7 +3,6 @@ import time
 import argparse
 from tqdm import tqdm
 from googletrans import Translator as GoogleTranslator
-from pypapago import Translator as PapagoTranslator
 
 ORIG_DATA_DIR = os.path.join("goemotions", "data")
 DATA_DIR = "data"
@@ -12,9 +11,8 @@ TRAIN_FILE = "train.tsv"
 DEV_FILE = "dev.tsv"
 TEST_FILE = "test.tsv"
 
-TEXT_MAX_LENGTH = 5000  # google & papago allows maximum size of 5000 for one request
+TEXT_MAX_LENGTH = 5000  # google translate allows maximum size of 5000 for one request
 GOOGLE_TIME_TO_SLEEP = 1.5
-PAPAGO_TIME_TO_SLEEP = 1.5
 
 
 def make_chunks(sentence_lst):

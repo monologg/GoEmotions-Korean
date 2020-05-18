@@ -136,3 +136,6 @@ goemotions/
 
 cached*
 ckpt/
+
+koelectra-base-finetuned-goemotions/
+koelectra-small-finetuned-goemotions/
