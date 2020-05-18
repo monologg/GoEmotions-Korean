@@ -27,8 +27,8 @@
   "seed": 42,
   "train_batch_size": 32,
   "eval_batch_size": 64,
-  "logging_steps": 10,
-  "save_steps": 10,
+  "logging_steps": 500,
+  "save_steps": 500,
   "learning_rate": 5e-5,
   "threshold": 0.3,
   "tokenizer_dir": "tokenizer"
