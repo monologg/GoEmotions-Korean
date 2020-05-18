@@ -1,5 +1,5 @@
 import torch.nn as nn
-from torch.nn import CrossEntropyLoss, MSELoss
+from torch.nn import BCEWithLogitsLoss
 from transformers.modeling_electra import ElectraModel, ElectraPreTrainedModel
 
 
@@ -11,6 +11,7 @@ class ElectraForMultiLabelClassification(ElectraPreTrainedModel):
         self.electra = ElectraModel(config)
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
         self.classifier = nn.Linear(config.hidden_size, self.config.num_labels)
+        self.loss_fct = BCEWithLogitsLoss()
 
         self.init_weights()
 
@@ -35,9 +36,7 @@ class ElectraForMultiLabelClassification(ElectraPreTrainedModel):
         outputs = (logits,)
 
         if labels is not None:
-            # loss_fct = CrossEntropyLoss()
-            # loss = loss_fct(logits.view(-1, self.num_labels), labels.view(-1))
-            # TODO Set sigmoid setting
+            loss = self.loss_fct(logits, labels)
             outputs = (loss,) + outputs
 
         return outputs  # (loss), logits, (hidden_states), (attentions)

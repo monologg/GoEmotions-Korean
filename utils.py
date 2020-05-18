@@ -5,6 +5,8 @@ import logging
 import torch
 import numpy as np
 
+from sklearn.metrics import precision_recall_fscore_support, accuracy_score
+
 from model import (
     ElectraForMultiLabelClassification,
 )
@@ -44,19 +46,19 @@ def set_seed(args):
         torch.cuda.manual_seed_all(args.seed)
 
 
-def simple_accuracy(labels, preds):
-    return (labels == preds).mean()
-
-
-def acc_score(labels, preds):
-    return {
-        "acc": simple_accuracy(labels, preds),
-    }
-
-
-def compute_metrics(task_name, labels, preds):
+def compute_metrics(labels, preds):
     assert len(preds) == len(labels)
-    if task_name == "intent-cls":
-        return acc_score(labels, preds)
-    else:
-        raise KeyError(task_name)
+    results = dict()
+
+    results["accuracy"] = accuracy_score(labels, preds)
+    results["macro_precision"], results["macro_recall"], results[
+        "macro_f1"], _ = precision_recall_fscore_support(
+        labels, preds, average="macro")
+    results["micro_precision"], results["micro_recall"], results[
+        "micro_f1"], _ = precision_recall_fscore_support(
+        labels, preds, average="micro")
+    results["weighted_precision"], results["weighted_recall"], results[
+        "weighted_f1"], _ = precision_recall_fscore_support(
+        labels, preds, average="weighted")
+
+    return results

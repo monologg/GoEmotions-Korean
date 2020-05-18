@@ -18,7 +18,7 @@ from transformers import (
 from utils import (
     CONFIG_CLASSES,
     TOKENIZER_CLASSES,
-    MODEL_CLASS,
+    MODEL_CLASSES,
     init_logger,
     set_seed,
     compute_metrics
@@ -34,6 +34,7 @@ logger = logging.getLogger(__name__)
 
 def train(args,
           model,
+          tokenizer,
           train_dataset,
           dev_dataset=None,
           test_dataset=None):
@@ -87,10 +88,8 @@ def train(args,
                 "attention_mask": batch[1],
                 "labels": batch[3]
             }
-            if args.model_type not in ["distilkobert"]:
-                inputs["token_type_ids"] = (
-                    batch[2] if args.model_type in ["kobert", "hanbert", "electra-base", "electra-small"] else None
-                )  # XLM-Roberta don't use segment_ids
+            if args.model_type not in ["distilkobert", "xlm-roberta"]:
+                inputs["token_type_ids"] = batch[2]
             outputs = model(**inputs)
 
             loss = outputs[0]
@@ -126,6 +125,7 @@ def train(args,
                         model.module if hasattr(model, "module") else model
                     )
                     model_to_save.save_pretrained(output_dir)
+                    tokenizer.save_pretrained(output_dir)
 
                     torch.save(args, os.path.join(output_dir, "training_args.bin"))
                     logger.info("Saving model checkpoint to {}".format(output_dir))
@@ -171,10 +171,8 @@ def evaluate(args, model, eval_dataset, mode, global_step=None):
                 "attention_mask": batch[1],
                 "labels": batch[3]
             }
-            if args.model_type not in ["distilkobert"]:
-                inputs["token_type_ids"] = (
-                    batch[2] if args.model_type in ["kobert", "hanbert", "electra-base", "electra-small"] else None
-                )  # XLM-Roberta don't use segment_ids
+            if args.model_type not in ["distilkobert", "xlm-roberta"]:
+                inputs["token_type_ids"] = batch[2]
             outputs = model(**inputs)
             tmp_eval_loss, logits = outputs[:2]
 
@@ -188,11 +186,12 @@ def evaluate(args, model, eval_dataset, mode, global_step=None):
             out_label_ids = np.append(out_label_ids, inputs["labels"].detach().cpu().numpy(), axis=0)
 
     eval_loss = eval_loss / nb_eval_steps
-    if output_modes[args.task] == "classification":
-        preds = np.argmax(preds, axis=1)
-    elif output_modes[args.task] == "regression":
-        preds = np.squeeze(preds)
-    result = compute_metrics(args.task, out_label_ids, preds)
+    results = {
+        "loss": eval_loss
+    }
+    preds[preds > args.threshold] = 1
+    preds[preds <= args.threshold] = 0
+    result = compute_metrics(out_label_ids, preds)
     results.update(result)
 
     output_dir = os.path.join(args.output_dir, mode)
@@ -211,7 +210,7 @@ def evaluate(args, model, eval_dataset, mode, global_step=None):
 
 def main(cli_args):
     # Read from config file and make args
-    with open(os.path.join(cli_args.config_dir, cli_args.task, cli_args.config_file)) as f:
+    with open(os.path.join(cli_args.config_dir, cli_args.config_file)) as f:
         args = AttrDict(json.load(f))
     logger.info("Training/evaluation parameters {}".format(args))
 
@@ -220,21 +219,21 @@ def main(cli_args):
     init_logger()
     set_seed(args)
 
-    processor = processors[args.task](args)
+    processor = GoEmotionsProcessor(args)
     label_list = processor.get_labels()
 
     config = CONFIG_CLASSES[args.model_type].from_pretrained(
         args.model_name_or_path,
-        num_labels=tasks_num_labels[args.task],
+        num_labels=len(label_list),
         finetuning_task=args.task,
         id2label={str(i): label for i, label in enumerate(label_list)},
         label2id={label: i for i, label in enumerate(label_list)}
     )
     tokenizer = TOKENIZER_CLASSES[args.model_type].from_pretrained(
-        args.model_name_or_path,
-        do_lower_case=args.do_lower_case
+        args.tokenizer_dir,
     )
-    model = MODEL_FOR_SEQUENCE_CLASSIFICATION[args.model_type].from_pretrained(
+    tokenizer.add_special_tokens({"additional_special_tokens": ["[NAME]", "[RELIGION]"]})
+    model = MODEL_CLASSES[args.model_type].from_pretrained(
         args.model_name_or_path,
         config=config
     )
@@ -252,7 +251,7 @@ def main(cli_args):
         args.evaluate_test_during_training = True  # If there is no dev dataset, only use testset
 
     if args.do_train:
-        global_step, tr_loss = train(args, model, train_dataset, dev_dataset, test_dataset)
+        global_step, tr_loss = train(args, model, tokenizer, train_dataset, dev_dataset, test_dataset)
         logger.info(" global_step = {}, average loss = {}".format(global_step, tr_loss))
 
     results = {}
@@ -268,7 +267,7 @@ def main(cli_args):
         logger.info("Evaluate the following checkpoints: %s", checkpoints)
         for checkpoint in checkpoints:
             global_step = checkpoint.split("-")[-1]
-            model = MODEL_FOR_SEQUENCE_CLASSIFICATION[args.model_type].from_pretrained(checkpoint)
+            model = MODEL_CLASSES[args.model_type].from_pretrained(checkpoint)
             model.to(args.device)
             result = evaluate(args, model, test_dataset, mode="test", global_step=global_step)
             result = dict((k + "_{}".format(global_step), v) for k, v in result.items())
@@ -283,7 +282,6 @@ def main(cli_args):
 if __name__ == '__main__':
     cli_parser = argparse.ArgumentParser()
 
-    cli_parser.add_argument("--task", type=str, required=True)
     cli_parser.add_argument("--config_dir", type=str, default="config")
     cli_parser.add_argument("--config_file", type=str, required=True)
 

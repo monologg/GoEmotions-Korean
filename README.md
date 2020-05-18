@@ -9,7 +9,7 @@
 - API 호출 간에 1.5초의 간격을 줌
 - `​​&#x200B;`(Zero-width space)가 번역 문장 안에 있으면 번역이 되지 않는 오류가 있어서 이는 제거하였음
 
-- 번역을 완료한 데이터는 `data` 디렉토리에 이미 있습니다. 혹여나 직접 번역하고 싶다면 아래의 코드를 실행하면 됩니다.
+- 번역을 완료한 데이터는 `data` 디렉토리에 이미 있습니다. 혹여나 직접 번역을 돌리고 싶다면 아래의 코드를 실행하면 됩니다.
 
 ```bash
 $ bash download_original_data.sh
@@ -18,9 +18,12 @@ $ python3 tranlate_data.py
 ```
 
 ## Train & Evaluation
-
+```bash
+$ python3 run_goemotions.py
+```
 
 ## Results
+
 
 ## Pipeline
 

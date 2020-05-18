@@ -83,9 +83,11 @@ def convert_examples_to_features(
         feature = InputFeatures(**inputs, label=labels[i])
         features.append(feature)
 
-    for i, example in enumerate(examples[:5]):
+    for i, example in enumerate(examples[:10]):
         logger.info("*** Example ***")
         logger.info("guid: {}".format(example.guid))
+        logger.info("sentence: {}".format(example.text_a))
+        logger.info("tokens: {}".format(" ".join([str(x) for x in tokenizer.tokenize(example.text_a)])))
         logger.info("input_ids: {}".format(" ".join([str(x) for x in features[i].input_ids])))
         logger.info("attention_mask: {}".format(" ".join([str(x) for x in features[i].attention_mask])))
         logger.info("token_type_ids: {}".format(" ".join([str(x) for x in features[i].token_type_ids])))
@@ -118,10 +120,11 @@ class GoEmotionsProcessor(object):
         examples = []
         for (i, line) in enumerate(lines):
             guid = "%s-%s" % (set_type, i)
-            items = line.strip().split("\t")
+            line = line.strip()
+            items = line.split("\t")
             text_a = items[0]
-            label = items[1].split(",")
-            if i % 10000 == 0:
+            label = list(map(int, items[1].split(",")))
+            if i % 5000 == 0:
                 logger.info(line)
             examples.append(InputExample(guid=guid, text_a=text_a, text_b=None, label=label))
         return examples
@@ -139,9 +142,8 @@ class GoEmotionsProcessor(object):
         elif mode == 'test':
             file_to_read = self.args.test_file
 
-        logger.info("LOOKING AT {}".format(os.path.join(self.args.data_dir, self.args.task, file_to_read)))
+        logger.info("LOOKING AT {}".format(os.path.join(self.args.data_dir, file_to_read)))
         return self._create_examples(self._read_file(os.path.join(self.args.data_dir,
-                                                                  self.args.task,
                                                                   file_to_read)), mode)
 
 
@@ -180,7 +182,7 @@ def load_and_cache_examples(args, tokenizer, mode):
     all_input_ids = torch.tensor([f.input_ids for f in features], dtype=torch.long)
     all_attention_mask = torch.tensor([f.attention_mask for f in features], dtype=torch.long)
     all_token_type_ids = torch.tensor([f.token_type_ids for f in features], dtype=torch.long)
-    all_labels = torch.tensor([f.label for f in features], dtype=torch.long)
+    all_labels = torch.tensor([f.label for f in features], dtype=torch.float)
 
     dataset = TensorDataset(all_input_ids, all_attention_mask, all_token_type_ids, all_labels)
     return dataset
