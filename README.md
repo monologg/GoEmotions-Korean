@@ -24,6 +24,7 @@ $ pip3 install -r requirements.txt
 - [pygoogletrans](https://github.com/ssut/py-googletrans)를 사용하여 한국어 데이터 생성
   - `pygoogletrans v2.4.1`이 pypi에 업데이트되지 않은 관계로 repository에서 곧바로 라이브러리를 설치하는 것을 권장 (`requirements.txt`에 명시되어 있음)
 - API 호출 간에 1.5초의 간격을 주었습니다.
+  - 한 번의 request에 최대 5000자를 넣을 수 있는 점을 고려하여 문장들을 `\r\n`으로 이어 붙여 input으로 넣었습니다.
 - `​​&#x200B;`(Zero-width space)가 번역 문장 안에 있으면 번역이 되지 않는 오류가 있어서 이는 제거하였습니다.
 - **번역을 완료한 데이터는 `data` 디렉토리에 이미 있습니다.** 혹여나 직접 번역을 돌리고 싶다면 아래의 명령어를 실행하면 됩니다.
 
@@ -53,10 +54,10 @@ $ python3 run_goemotions.py --config_file koelectra-small.json
 
 `Macro F1`을 기준으로 결과 측정 (Best result)
 
-| Macro F1 (%)        |    Dev    |   Test    |
-| ------------------- | :-------: | :-------: |
-| **KoELECTRA-Small** | **36.92** | **37.87** |
-| **KoELECTRA-Base**  |   40.34   | **41.54** |
+| Macro F1 (%)        |  Dev  |   Test    |
+| ------------------- | :---: | :-------: |
+| **KoELECTRA-Small** | 36.92 | **37.87** |
+| **KoELECTRA-Base**  | 40.34 | **41.54** |
 
 ## Pipeline
 
