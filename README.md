@@ -4,7 +4,7 @@
 
 ## GoEmotions
 
-**58000개의 Reddit comments**를 가지고 **28개의 emotion (Neutral 포함)**으로 라벨링한 데이터셋
+**58000개의 Reddit comments**를 **28개의 emotion**으로 라벨링한 데이터셋
 
 - admiration, amusement, anger, annoyance, approval, caring, confusion, curiosity, desire, disappointment, disapproval, disgust, embarrassment, excitement, fear, gratitude, grief, joy, love, nervousness, optimism, pride, realization, relief, remorse, sadness, surprise, neutral
 
