@@ -21,7 +21,7 @@ $ pip3 install -r requirements.txt
 
 ## Translated Data
 
-🚨 Reddit 댓글로 만든 데이터여서 **번역된 결과물의 품질이 좋지 않습니다.** 🚨
+🚨 **Reddit 댓글로 만든 데이터여서 번역된 결과물의 품질이 좋지 않습니다.** 🚨
 
 - [pygoogletrans](https://github.com/ssut/py-googletrans)를 사용하여 한국어 데이터 생성
   - `pygoogletrans v2.4.1`이 pypi에 업데이트되지 않은 관계로 repository에서 곧바로 라이브러리를 설치하는 것을 권장 (`requirements.txt`에 명시되어 있음)
