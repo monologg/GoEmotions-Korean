@@ -14,19 +14,27 @@ from transformers import (
     ElectraTokenizer,
 )
 
+from tokenization_kocharelectra import KoCharElectraTokenizer
+
 CONFIG_CLASSES = {
     "koelectra-small": ElectraConfig,
-    "koelectra-base": ElectraConfig
+    "koelectra-base": ElectraConfig,
+    "kocharelectra-base": ElectraConfig,
+    "kocharelectra-small": ElectraConfig
 }
 
 TOKENIZER_CLASSES = {
     "koelectra-small": ElectraTokenizer,
-    "koelectra-base": ElectraTokenizer
+    "koelectra-base": ElectraTokenizer,
+    "kocharelectra-base": KoCharElectraTokenizer,
+    "kocharelectra-small": KoCharElectraTokenizer
 }
 
 MODEL_CLASSES = {
     "koelectra-small": ElectraForMultiLabelClassification,
-    "koelectra-base": ElectraForMultiLabelClassification
+    "koelectra-base": ElectraForMultiLabelClassification,
+    "kocharelectra-base": ElectraForMultiLabelClassification,
+    "kocharelectra-small": ElectraForMultiLabelClassification
 }
 
 
