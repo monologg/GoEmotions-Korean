@@ -5,7 +5,6 @@ from pprint import pprint
 
 
 tokenizer = ElectraTokenizer.from_pretrained("monologg/koelectra-base-finetuned-goemotions")
-tokenizer.add_special_tokens({"additional_special_tokens": ["[NAME]", "[RELIGION]"]})  # BUG: It should be hard-coded on transformers v2.9.1
 model = ElectraForMultiLabelClassification.from_pretrained("monologg/koelectra-base-finetuned-goemotions")
 
 goemotions = MultiLabelPipeline(

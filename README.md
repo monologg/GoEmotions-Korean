@@ -2,6 +2,10 @@
 
 [GoEmotions](https://github.com/google-research/google-research/tree/master/goemotions) 데이터셋을 한국어로 번역한 후, [KoELECTRA](https://github.com/monologg/KoELECTRA)로 학습
 
+## Updates
+
+**June 19, 2020** - Transformers v2.9.1 기준으로 모델 학습 시 `[NAME]`, `[RELIGION]`과 같은 Special token을 추가하였음에도 pipeline에서 다시 사용할 때 적용이 되지 않는 이슈가 있었으나, Transformers v2.11.0에서 해당 이슈가 해결되었습니다.
+
 ## GoEmotions
 
 **58000개의 Reddit comments**를 **28개의 emotion**으로 라벨링한 데이터셋
@@ -11,7 +15,7 @@
 ## Requirements
 
 - torch==1.4.0
-- transformers=2.9.1
+- transformers=2.11.0
 - googletrans==2.4.1
 - attrdict==2.0.1
 
@@ -74,7 +78,6 @@ from pprint import pprint
 
 
 tokenizer = ElectraTokenizer.from_pretrained("monologg/koelectra-base-finetuned-goemotions")
-tokenizer.add_special_tokens({"additional_special_tokens": ["[NAME]", "[RELIGION]"]})  # BUG: It should be hard-coded on transformers v2.9.1
 model = ElectraForMultiLabelClassification.from_pretrained("monologg/koelectra-base-finetuned-goemotions")
 
 goemotions = MultiLabelPipeline(
@@ -98,15 +101,15 @@ texts = [
 pprint(goemotions(texts))
 
 # Output
-[{'labels': ['disapproval'], 'scores': [0.82489157]},
- {'labels': ['fear'], 'scores': [0.9509703]},
- {'labels': ['neutral'], 'scores': [0.9585297]},
- {'labels': ['approval', 'neutral'], 'scores': [0.62351847, 0.34225133]},
- {'labels': ['admiration'], 'scores': [0.97146636]},
- {'labels': ['love', 'neutral'], 'scores': [0.32616842, 0.5455638]},
- {'labels': ['caring', 'nervousness'], 'scores': [0.51289016, 0.4741806]},
- {'labels': ['amusement'], 'scores': [0.9680228]},
- {'labels': ['anger', 'annoyance'], 'scores': [0.5345557, 0.764603]}]
+[{'labels': ['disapproval'], 'scores': [0.8736532]},
+ {'labels': ['fear'], 'scores': [0.97049415]},
+ {'labels': ['neutral'], 'scores': [0.94366586]},
+ {'labels': ['neutral'], 'scores': [0.49382192]},
+ {'labels': ['admiration'], 'scores': [0.9761528]},
+ {'labels': ['love', 'neutral'], 'scores': [0.4782611, 0.5644545]},
+ {'labels': ['caring', 'nervousness'], 'scores': [0.31030405, 0.76883996]},
+ {'labels': ['amusement'], 'scores': [0.9888398]},
+ {'labels': ['annoyance'], 'scores': [0.93368]}]
 ```
 
 ## Reference
