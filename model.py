@@ -33,7 +33,7 @@ class ElectraForMultiLabelClassification(ElectraPreTrainedModel):
         pooled_output = self.dropout(pooled_output)
         logits = self.classifier(pooled_output)
 
-        outputs = (logits,)
+        outputs = (logits,) + discriminator_hidden_states[1:]  # add hidden states and attention if they are here
 
         if labels is not None:
             loss = self.loss_fct(logits, labels)
