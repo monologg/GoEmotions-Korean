@@ -13,7 +13,7 @@
   "do_train": true,
   "do_eval": true,
   "max_seq_len": 50,
-  "num_train_epochs": 8,
+  "num_train_epochs": 15,
   "weight_decay": 0.0,
   "gradient_accumulation_steps": 1,
   "adam_epsilon": 1e-8,
@@ -21,9 +21,9 @@
   "max_steps": -1,
   "max_grad_norm": 1.0,
   "no_cuda": false,
-  "model_type": "koelectra-base",
+  "model_type": "koelectra-base-v1",
   "model_name_or_path": "monologg/koelectra-base-discriminator",
-  "output_dir": "koelectra-base-goemotions-ckpt",
+  "output_dir": "koelectra-base-v1-goemotions-ckpt",
   "seed": 42,
   "train_batch_size": 32,
   "eval_batch_size": 64,
@@ -31,5 +31,5 @@
   "save_steps": 500,
   "learning_rate": 5e-5,
   "threshold": 0.3,
-  "tokenizer_dir": "tokenizer"
+  "tokenizer_dir": "tokenizer-v1"
 }

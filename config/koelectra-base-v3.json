@@ -21,15 +21,15 @@
   "max_steps": -1,
   "max_grad_norm": 1.0,
   "no_cuda": false,
-  "model_type": "koelectra-small",
-  "model_name_or_path": "monologg/koelectra-small-discriminator",
-  "output_dir": "koelectra-small-goemotions-ckpt",
-  "seed": 777,
+  "model_type": "koelectra-base-v3",
+  "model_name_or_path": "monologg/koelectra-base-v3-discriminator",
+  "output_dir": "koelectra-base-v3-goemotions-ckpt",
+  "seed": 42,
   "train_batch_size": 32,
   "eval_batch_size": 64,
   "logging_steps": 500,
   "save_steps": 500,
   "learning_rate": 5e-5,
   "threshold": 0.3,
-  "tokenizer_dir": "tokenizer"
+  "tokenizer_dir": "tokenizer-v3"
 }

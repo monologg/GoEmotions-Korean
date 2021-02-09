@@ -1,4 +1,3 @@
-import os
 import random
 import logging
 
@@ -15,18 +14,24 @@ from transformers import (
 )
 
 CONFIG_CLASSES = {
-    "koelectra-small": ElectraConfig,
-    "koelectra-base": ElectraConfig
+    "koelectra-small-v1": ElectraConfig,
+    "koelectra-base-v1": ElectraConfig,
+    "koelectra-small-v3": ElectraConfig,
+    "koelectra-base-v3": ElectraConfig
 }
 
 TOKENIZER_CLASSES = {
-    "koelectra-small": ElectraTokenizer,
-    "koelectra-base": ElectraTokenizer
+    "koelectra-small-v1": ElectraTokenizer,
+    "koelectra-base-v1": ElectraTokenizer,
+    "koelectra-small-v3": ElectraTokenizer,
+    "koelectra-base-v3": ElectraTokenizer
 }
 
 MODEL_CLASSES = {
-    "koelectra-small": ElectraForMultiLabelClassification,
-    "koelectra-base": ElectraForMultiLabelClassification
+    "koelectra-small-v1": ElectraForMultiLabelClassification,
+    "koelectra-base-v1": ElectraForMultiLabelClassification,
+    "koelectra-small-v3": ElectraForMultiLabelClassification,
+    "koelectra-base-v3": ElectraForMultiLabelClassification
 }
 
 
