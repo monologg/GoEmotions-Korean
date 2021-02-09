@@ -6,6 +6,8 @@
 
 **June 19, 2020** - Transformers v2.9.1 기준으로 모델 학습 시 `[NAME]`, `[RELIGION]`과 같은 Special token을 추가하였음에도 pipeline에서 다시 사용할 때 적용이 되지 않는 이슈가 있었으나, Transformers v2.11.0에서 해당 이슈가 해결되었습니다.
 
+**Feb 9, 2021** - Transformers v3.5.1 기준으로 `KoELECTRA-v1`, `KoELECTRA-v3`를 가지고 학습하여 새로 모델을 업로드 하였습니다.
+
 ## GoEmotions
 
 **58000개의 Reddit comments**를 **28개의 emotion**으로 라벨링한 데이터셋
@@ -14,8 +16,8 @@
 
 ## Requirements
 
-- torch==1.4.0
-- transformers=2.11.0
+- torch==1.7.1
+- transformers=3.5.1
 - googletrans==2.4.1
 - attrdict==2.0.1
 
@@ -43,7 +45,6 @@ $ python3 tranlate_data.py
 ## Tokenizer
 
 - 데이터셋에 `[NAME]`, `[RELIGION]`의 Special Token이 존재하여, 이를 `vocab.txt`의 `[unused0]`와 `[unused1]`에 각각 할당하였습니다.
-- `transformers v2.9.1` 기준으로 `additional_special_tokens`에 위의 두 개의 토큰을 추가하였음에도 처리가 되지 않는 이슈가 있어 **config를 통해서가 아닌 code 단에서 직접 넣어줘야 합니다**. (Pipeline 코드 참고)
 
 ## Train & Evaluation
 
@@ -60,15 +61,21 @@ $ python3 run_goemotions.py --config_file koelectra-small.json
 
 `Macro F1`을 기준으로 결과 측정 (Best result)
 
-| Macro F1 (%)        |  Dev  |   Test    |
-| ------------------- | :---: | :-------: |
-| **KoELECTRA-Small** | 36.92 | **37.87** |
-| **KoELECTRA-Base**  | 40.34 | **41.54** |
+| Macro F1 (%)           |  Dev  |   Test    |
+| ---------------------- | :---: | :-------: |
+| **KoELECTRA-small-v1** | 39.99 | **41.02** |
+| **KoELECTRA-base-v1**  | 42.18 | **44.03** |
+| **KoELECTRA-small-v3** | 40.27 | **40.85** |
+| **KoELECTRA-base-v3**  | 42.85 | **42.28** |
 
 ## Pipeline
 
 - `MultiLabelPipeline` 클래스를 새로 만들어 Multi-label classification에 대한 inference가 가능하게 하였습니다.
-- Huggingface s3에 `monologg/koelectra-base-finetuned-goemotions`와 `monologg/koelectra-small-finetuned-goemotions` 모델을 업로드하였습니다.
+- Huggingface s3에 모델을 업로드하였습니다.
+  - `monologg/koelectra-small-v1-goemotions`
+  - `monologg/koelectra-base-v1-goemotions`
+  - `monologg/koelectra-small-v3-goemotions`
+  - `monologg/koelectra-base-v3-goemotions`
 
 ```python
 from multilabel_pipeline import MultiLabelPipeline
@@ -77,8 +84,8 @@ from model import ElectraForMultiLabelClassification
 from pprint import pprint
 
 
-tokenizer = ElectraTokenizer.from_pretrained("monologg/koelectra-base-finetuned-goemotions")
-model = ElectraForMultiLabelClassification.from_pretrained("monologg/koelectra-base-finetuned-goemotions")
+tokenizer = ElectraTokenizer.from_pretrained("monologg/koelectra-base-v3-goemotions")
+model = ElectraForMultiLabelClassification.from_pretrained("monologg/koelectra-base-v3-goemotions")
 
 goemotions = MultiLabelPipeline(
     model=model,
@@ -101,15 +108,15 @@ texts = [
 pprint(goemotions(texts))
 
 # Output
-[{'labels': ['disapproval'], 'scores': [0.8736532]},
- {'labels': ['fear'], 'scores': [0.97049415]},
- {'labels': ['neutral'], 'scores': [0.94366586]},
- {'labels': ['neutral'], 'scores': [0.49382192]},
- {'labels': ['admiration'], 'scores': [0.9761528]},
- {'labels': ['love', 'neutral'], 'scores': [0.4782611, 0.5644545]},
- {'labels': ['caring', 'nervousness'], 'scores': [0.31030405, 0.76883996]},
- {'labels': ['amusement'], 'scores': [0.9888398]},
- {'labels': ['annoyance'], 'scores': [0.93368]}]
+[{'labels': ['disapproval'], 'scores': [0.97151965]},
+ {'labels': ['fear'], 'scores': [0.9519822]},
+ {'labels': ['disapproval', 'neutral'], 'scores': [0.452921, 0.5345312]},
+ {'labels': ['love'], 'scores': [0.8750478]},
+ {'labels': ['admiration'], 'scores': [0.93127275]},
+ {'labels': ['love'], 'scores': [0.9093589]},
+ {'labels': ['nervousness', 'neutral'], 'scores': [0.76960915, 0.33462417]},
+ {'labels': ['disapproval'], 'scores': [0.95657086]},
+ {'labels': ['annoyance', 'disgust'], 'scores': [0.39240348, 0.7896941]}]
 ```
 
 ## Reference

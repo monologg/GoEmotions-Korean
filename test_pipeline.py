@@ -4,8 +4,8 @@ from model import ElectraForMultiLabelClassification
 from pprint import pprint
 
 
-tokenizer = ElectraTokenizer.from_pretrained("monologg/koelectra-base-finetuned-goemotions")
-model = ElectraForMultiLabelClassification.from_pretrained("monologg/koelectra-base-finetuned-goemotions")
+tokenizer = ElectraTokenizer.from_pretrained("monologg/koelectra-base-v3-goemotions")
+model = ElectraForMultiLabelClassification.from_pretrained("monologg/koelectra-base-v3-goemotions")
 
 goemotions = MultiLabelPipeline(
     model=model,
