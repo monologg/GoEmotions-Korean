@@ -1,4 +1,4 @@
 torch==1.7.1
-transformers==3.5.1
+transformers==4.30.0
 git+git://github.com/ssut/py-googletrans
 attrdict==2.0.1
